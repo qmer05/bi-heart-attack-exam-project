@@ -3,9 +3,16 @@ import numpy as np
 import pandas as pd
 import joblib
 from sklearn.tree import _tree
+import plotly.graph_objects as go
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-# Load shared scaler
-scaler = joblib.load('outputs/models/scaler.pkl')
+# --- Load models & scalers ---
+scaler = joblib.load('outputs/models/scaler.pkl')                 # For Logistic Regression
+scaler_kmeans = joblib.load('outputs/models/scaler_kmeans.pkl')   # Trained on 7 features only
+kmeans = joblib.load('outputs/models/kmeans_model.pkl')           # Trained K-Means model
+cluster_profiles = pd.read_csv('outputs/models/cluster_feature_means.csv')
+cluster_outcomes = pd.read_csv('outputs/models/cluster_outcome_ratios.csv')
 
 # --- UI Setup ---
 st.title("Heart Attack Risk Prediction Dashboard")
@@ -17,26 +24,26 @@ model_option = st.sidebar.selectbox("Choose Prediction Model", [
     "Logistic Regression", "Decision Tree", "K-Means Clustering"
 ])
 
-logistic_features = [
-    'Age', 'Heart rate', 'Systolic blood pressure', 'Diastolic blood pressure',
-    'Blood sugar', 'CK-MB', 'Troponin', 'pulse_pressure'
-]
+# Input sliders (shared)
+age = st.sidebar.slider("Age", 18, 99, 56, format="%d years")
+heart_rate = st.sidebar.slider("Heart Rate", 35, 130, 75, format="%d bpm")
+sbp = st.sidebar.slider("Systolic Blood Pressure", 60, 200, 130, format="%d mmHg")
+dbp = st.sidebar.slider("Diastolic Blood Pressure", 35, 120, 70, format="%d mmHg")
+blood_sugar = st.sidebar.slider("Blood Sugar", 30, 280, 120, format="%d mg/dL")
+ckmb = st.sidebar.slider("CK-MB", 0.30, 12.99, 2.49, format="%.2f ng/mL")
+# Troponin slider (logistic-friendly: 1-30 ng/mL)
+troponin_ui = st.sidebar.slider("Troponin", 1, 30, 5, format="%d ng/mL")
+troponin_for_logistic = troponin_ui / 1000       # e.g., 10 -> 0.010 for logistic
+troponin_for_kmeans = troponin_ui / 100          # e.g., 10 -> 0.10 for k-means
+pulse_pressure = sbp - dbp
 
-# NOTE: We will dynamically use the actual model's features below instead of hardcoding.
-
+# --- Logistic Regression ---
 if model_option == "Logistic Regression":
-    # Input sliders for logistic regression
-    age = st.sidebar.slider("Age", 18, 99, 56, format="%d years")
-    heart_rate = st.sidebar.slider("Heart Rate", 35, 130, 75, format="%d bpm")
-    sbp = st.sidebar.slider("Systolic Blood Pressure", 60, 200, 130, format="%d mmHg")
-    dbp = st.sidebar.slider("Diastolic Blood Pressure", 35, 120, 70, format="%d mmHg")
-    blood_sugar = st.sidebar.slider("Blood Sugar", 30, 280, 120, format="%d mg/dL")
-    ckmb = st.sidebar.slider("CK-MB", 0.30, 12.99, 2.49, format="%.2f ng/mL")
-    troponin_ui = st.sidebar.slider("Troponin", 1, 30, 5, format="%d ng/mL")
-    troponin = troponin_ui / 1000
-
-    pulse_pressure = sbp - dbp
-    input_data = np.array([[age, heart_rate, sbp, dbp, blood_sugar, ckmb, troponin, pulse_pressure]])
+    logistic_features = [
+        'Age', 'Heart rate', 'Systolic blood pressure', 'Diastolic blood pressure',
+        'Blood sugar', 'CK-MB', 'Troponin', 'pulse_pressure'
+    ]
+    input_data = np.array([[age, heart_rate, sbp, dbp, blood_sugar, ckmb, troponin_for_logistic, pulse_pressure]])
     input_scaled = scaler.transform(input_data)
 
     model = joblib.load('outputs/models/logistic_model_final.pkl')
@@ -53,7 +60,6 @@ if model_option == "Logistic Regression":
     st.write("**Heart Attack Risk:**", risk_label)
     st.write(f"**Probability:** {proba:.2%}")
 
-    import plotly.graph_objects as go
     fig = go.Figure(go.Indicator(
         mode="gauge+number+delta",
         value=proba * 100,
@@ -93,6 +99,7 @@ if model_option == "Logistic Regression":
         sign = "↑" if val > 0 else "↓"
         st.write(f"- **{feat}**: {sign} contributed **{val:.2f}**")
 
+# --- Decision Tree ---
 elif model_option == "Decision Tree":
     model = joblib.load('outputs/models/decision_tree_model.pkl')
     st.subheader("Step-by-Step Decision Tree Walkthrough")
@@ -135,6 +142,75 @@ elif model_option == "Decision Tree":
         st.write("**Prediction:**", "🔴 Heart Attack" if prediction == 1 else "🟢 No Heart Attack")
         st.write(f"**Confidence:** {probability:.2%} based on {total} samples")
 
+# --- K-Means Clustering ---
 else:
-    st.subheader("K-Means Clustering")
-    st.info("K-Means visualization coming soon...")
+    st.subheader("K-Means Clustering: Clinical Risk Subtypes")
+
+    kmeans_features = ['Age', 'Heart rate', 'Systolic blood pressure',
+                       'Diastolic blood pressure', 'Blood sugar', 'CK-MB', 'Troponin']
+    input_kmeans = np.array([[age, heart_rate, sbp, dbp, blood_sugar, ckmb, troponin_for_kmeans]])
+    input_scaled_kmeans = scaler_kmeans.transform(input_kmeans)
+
+    cluster_id = kmeans.predict(input_scaled_kmeans)[0]
+    st.write(f"🧬 **Assigned Cluster:** {cluster_id}")
+
+    risk_prob = cluster_outcomes.loc[cluster_id, 'HeartAttackRate']
+    if risk_prob > 0.8:
+        risk_label = "🔴 High"
+    elif risk_prob > 0.4:
+        risk_label = "🟠 Medium"
+    else:
+        risk_label = "🟢 Low"
+
+    st.write(f"**Risk Level:** {risk_label} ({risk_prob:.0%} in this cluster)")
+
+    st.markdown("### 🔬 Cluster Profile vs. Patient")
+    cluster_mean = cluster_profiles.loc[cluster_id, kmeans_features].values
+    categories = kmeans_features + [kmeans_features[0]]
+    patient_values = np.append(input_kmeans[0], input_kmeans[0][0])
+    cluster_values = np.append(cluster_mean, cluster_mean[0])
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatterpolar(r=patient_values, theta=categories, fill='toself', name='Patient'))
+    fig.add_trace(go.Scatterpolar(r=cluster_values, theta=categories, fill='toself', name='Cluster Avg'))
+    fig.update_layout(polar=dict(radialaxis=dict(visible=True)), showlegend=True)
+    st.plotly_chart(fig)
+
+    st.markdown("### 🧭 Cluster Heatmap Overview")
+    fig, ax = plt.subplots(figsize=(8, 5))
+    sns.heatmap(cluster_profiles[kmeans_features], annot=True, cmap="coolwarm", fmt=".1f", ax=ax)
+    ax.set_title("Average Clinical Features by Cluster")
+    st.pyplot(fig)
+
+    st.markdown("### 🧠 Clinical Interpretation")
+    if risk_label == "🔴 High":
+        st.warning("⚠️ High-risk cluster: features like elevated Troponin or CK-MB likely contributed. Immediate follow-up advised.")
+    elif risk_label == "🟠 Medium":
+        st.info("🩺 Medium-risk cluster. Patient shows moderate indicators; further testing recommended.")
+    else:
+        st.success("✅ Low-risk cluster. Continue monitoring and encourage healthy habits.")
+
+        st.markdown("### 📋 Cluster Risk Overview")
+
+    # Static cross-tabulation (from training, not recomputed here)
+    cluster_counts = pd.DataFrame({
+        'Cluster': [0, 1, 2, 3, 4],
+        'No Heart Attack': [153, 183, 22, 0, 88],
+        'Heart Attack': [63, 89, 77, 65, 48]
+    }).set_index('Cluster')
+
+    cluster_percentages = cluster_counts.div(cluster_counts.sum(axis=1), axis=0).round(2)
+    cluster_percentages.columns = ['% No Heart Attack', '% Heart Attack']
+
+    st.markdown("#### 🧮 Raw Cluster Counts")
+    st.dataframe(cluster_counts)
+
+    st.markdown("#### 📊 Risk Proportions per Cluster")
+    st.dataframe(cluster_percentages)
+
+    # Highlight current user's cluster
+    cluster_stats = cluster_percentages.loc[cluster_id]
+    st.markdown("#### 🧠 Your Cluster in Context")
+    st.write(f"- **You are in Cluster {cluster_id}**.")
+    st.write(f"- In this cluster, **{cluster_stats['% Heart Attack']:.0%}** of patients had a heart attack.")
+
