@@ -30,7 +30,7 @@ heart_rate = st.sidebar.slider("Heart Rate", 35, 130, 75, format="%d bpm")
 sbp = st.sidebar.slider("Systolic Blood Pressure", 60, 200, 130, format="%d mmHg")
 dbp = st.sidebar.slider("Diastolic Blood Pressure", 35, 120, 70, format="%d mmHg")
 blood_sugar = st.sidebar.slider("Blood Sugar", 30, 280, 120, format="%d mg/dL")
-ckmb = st.sidebar.slider("CK-MB", 0.30, 12.99, 2.49, format="%.2f ng/mL")
+ckmb = st.sidebar.slider("CK-MB", 0.30, 10.99, 2.49, format="%.2f ng/mL")
 # Troponin slider (logistic-friendly: 1-30 ng/mL)
 troponin_ui = st.sidebar.slider("Troponin", 1, 30, 5, format="%d ng/mL")
 troponin_for_logistic = troponin_ui / 1000       # e.g., 10 -> 0.010 for logistic
@@ -57,8 +57,14 @@ if model_option == "Logistic Regression":
         risk_label = "🟢 Low"
 
     st.subheader(f"Prediction Result ({model_option})")
-    st.write("**Heart Attack Risk:**", risk_label)
-    st.write(f"**Probability:** {proba:.2%}")
+    st.write("**Heart Attack Risk Level:**", risk_label)
+    st.write(f"**Estimated Probability of Heart Attack:** {proba:.2%}")
+
+    st.markdown("""
+    This score reflects the model’s prediction based on the entered clinical values. 
+    The probability represents how likely it is that the patient has experienced or will experience a heart attack, 
+    **according to the logistic regression model** trained on past medical data.
+    """)
 
     fig = go.Figure(go.Indicator(
         mode="gauge+number+delta",
@@ -98,6 +104,95 @@ if model_option == "Logistic Regression":
     for feat, val in sorted(influence.items(), key=lambda x: abs(x[1]), reverse=True):
         sign = "↑" if val > 0 else "↓"
         st.write(f"- **{feat}**: {sign} contributed **{val:.2f}**")
+
+    # --- Coefficient Table ---
+    st.markdown("## 📈 Logistic Regression Coefficients")
+
+    # Load coefficients again with proper labels (same features used in training)
+    coef_series = pd.Series(model.coef_[0], index=logistic_features).sort_values(ascending=False)
+
+    st.dataframe(coef_series.rename("Coefficient").to_frame())
+
+    st.markdown(
+        "- Coefficients represent the **log-odds impact** of each feature.\n"
+        "- **Positive values** indicate higher risk when the feature increases (e.g., Troponin).\n"
+        "- **Negative values** suggest a protective or inverse association."
+    )
+
+    st.markdown("🧠 **Observation**: Troponin dominates the model with the highest positive influence.")
+
+    # --- Visual Training Insights ---
+    st.markdown("## 📊 Visual Insights from Training Phase")
+
+    st.markdown("### 1️⃣ Troponin Levels by Heart Attack Result")
+    st.image("outputs/graphs/troponin_levels_by_heart_attack.png", caption="Boxplot of Troponin Levels")
+    st.markdown(
+        "- Troponin is significantly higher in patients with heart attacks.\n"
+        "- Confirms why Troponin received the **strongest model weight**.\n"
+        "- High clinical diagnostic value in distinguishing between outcome classes."
+    )
+
+    st.markdown("### 2️⃣ Confusion Matrix on Test Data")
+    st.image("outputs/graphs/confusion_matrix_lr.png", caption="Confusion Matrix (Default Threshold)")
+    st.markdown(
+        "- Diagonal values show correct predictions; off-diagonal are errors.\n"
+        "- The model achieved **70% accuracy** with a balanced error spread.\n"
+        "- Helps identify trade-offs between false positives and false negatives."
+    )
+
+    st.markdown("### 3️⃣ Cross-Validation Performance (Fold-wise)")
+    st.image("outputs/graphs/cv_performance.png", caption="5-Fold CV Performance")
+    st.markdown(
+        "- Shows model stability across 5 data splits.\n"
+        "- Performance metrics like precision, recall, F1 score are consistent.\n"
+        "- Helps justify Fold 3 as the best candidate for final model training."
+    )
+
+    st.markdown("### 4️⃣ Threshold Tuning (Fold 3 Final Model)")
+    st.image("outputs/graphs/threshold_tuning.png", caption="Threshold Optimization")
+    st.markdown(
+        "- Evaluated performance at different probability cutoffs.\n"
+        "- Threshold **0.40** offered the **best F1 score** and clinical safety.\n"
+        "- Used this threshold to label high/medium/low risk categories in predictions."
+    )
+
+    st.markdown("### 5️⃣ Threshold Tuning Results")
+
+    # Load threshold tuning results from CSV
+    threshold_results = pd.read_csv("outputs/models/threshold_tuning_summary.csv")
+    st.dataframe(threshold_results.round(3))
+
+    st.markdown("""
+        - Each row represents model performance at a specific classification threshold (probability cutoff).
+    - **Lower thresholds (e.g., 0.10–0.25)** increase sensitivity (**recall**) but reduce specificity (**precision**), leading to more false positives.
+    - **Higher thresholds (e.g., 0.50–0.55)** increase precision but miss more actual heart attack cases (lower recall).
+    - The **optimal threshold is 0.40**, achieving the best F1 score (**0.719**), strong recall (**0.797**), and high accuracy (**72.8%**).
+
+    🧠 This threshold was selected for use in the app to balance **clinical safety** and **prediction accuracy**.
+    """)
+
+    st.markdown("## ✅ Logistic Regression: Summary & Hypothesis Check")
+
+    st.markdown("""
+    ### 🔍 Key Takeaways
+
+    - Logistic Regression provided a strong, interpretable model with ~73% accuracy and optimal performance at a **0.40 threshold**.
+    - **Troponin** emerged as the most influential predictor, followed by **CK-MB**, aligning with clinical expectations.
+
+    ---
+
+    ### 📊 Hypothesis Review
+
+    - **H1 (Troponin & CK-MB):** ✅ Confirmed – strong positive coefficients and clinical relevance.
+    - **H2 (BP & Glucose):** ⚠️ Partially supported – minor influence observed.
+    - **H3 (Age):** ✅ Supported – age showed positive correlation, though modest in magnitude.
+
+    ---
+
+    ### 🧠 Conclusion
+
+    Logistic regression validated key biomarkers and offered actionable insights for early heart attack detection. It serves well as a baseline for risk stratification and supports future integration of broader clinical features.
+    """)
 
 # --- Decision Tree ---
 elif model_option == "Decision Tree":
