@@ -88,7 +88,7 @@ if model_option == "Logistic Regression":
     ))
     st.plotly_chart(fig)
 
-    st.markdown("🔎 **Clinical Interpretation**")
+    st.markdown("**Clinical Interpretation**")
     if proba >= 0.70:
         st.warning("⚠️ This patient is at **high risk**. Recommend urgent follow-up.")
     elif proba >= 0.40:
@@ -100,13 +100,13 @@ if model_option == "Logistic Regression":
     scaled_vals = input_scaled[0]
     influence = {feat: coef_dict[feat] * scaled_vals[i] for i, feat in enumerate(logistic_features)}
 
-    st.markdown("### 🧠 Top Feature Contributors")
+    st.markdown("### Top Feature Contributors")
     for feat, val in sorted(influence.items(), key=lambda x: abs(x[1]), reverse=True):
         sign = "↑" if val > 0 else "↓"
         st.write(f"- **{feat}**: {sign} contributed **{val:.2f}**")
 
     # --- Coefficient Table ---
-    st.markdown("## 📈 Logistic Regression Coefficients")
+    st.markdown("## Logistic Regression Coefficients")
 
     # Load coefficients again with proper labels (same features used in training)
     coef_series = pd.Series(model.coef_[0], index=logistic_features).sort_values(ascending=False)
@@ -119,10 +119,10 @@ if model_option == "Logistic Regression":
         "- **Negative values** suggest a protective or inverse association."
     )
 
-    st.markdown("🧠 **Observation**: Troponin dominates the model with the highest positive influence.")
+    st.markdown("**Observation**: Troponin dominates the model with the highest positive influence.")
 
     # --- Visual Training Insights ---
-    st.markdown("## 📊 Visual Insights from Training Phase")
+    st.markdown("## Visual Insights from Training Phase")
 
     st.markdown("### 1️⃣ Troponin Levels by Heart Attack Result")
     st.image("outputs/graphs/troponin_levels_by_heart_attack.png", caption="Boxplot of Troponin Levels")
@@ -168,28 +168,28 @@ if model_option == "Logistic Regression":
     - **Higher thresholds (e.g., 0.50–0.55)** increase precision but miss more actual heart attack cases (lower recall).
     - The **optimal threshold is 0.40**, achieving the best F1 score (**0.719**), strong recall (**0.797**), and high accuracy (**72.8%**).
 
-    🧠 This threshold was selected for use in the app to balance **clinical safety** and **prediction accuracy**.
+    This threshold was selected for use in the app to balance **clinical safety** and **prediction accuracy**.
     """)
 
-    st.markdown("## ✅ Logistic Regression: Summary & Hypothesis Check")
+    st.markdown("## Logistic Regression: Summary & Hypothesis Check")
 
     st.markdown("""
-    ### 🔍 Key Takeaways
+    ### Key Takeaways
 
     - Logistic Regression provided a strong, interpretable model with ~73% accuracy and optimal performance at a **0.40 threshold**.
     - **Troponin** emerged as the most influential predictor, followed by **CK-MB**, aligning with clinical expectations.
 
     ---
 
-    ### 📊 Hypothesis Review
+    ### Hypothesis Review
 
     - **H1 (Troponin & CK-MB):** ✅ Confirmed - strong positive coefficients and clinical relevance.
-    - **H2 (BP & Glucose):** ❌ Not supported (inconclusive) - coefficients suggest weak or inverse relationships.
+    - **H2 (BP & Glucose):** ❌ Not supported - coefficients suggest weak or inverse relationships.
     - **H3 (Age):** ✅ Supported - age showed positive correlation, though modest in magnitude.
 
     ---
 
-    ### 🧠 Conclusion
+    ### Conclusion
 
     Logistic regression validated key biomarkers and offered actionable insights for early heart attack detection. It serves well as a baseline for risk stratification and supports future integration of broader clinical features.
     """)
@@ -237,6 +237,83 @@ elif model_option == "Decision Tree":
         st.write("**Prediction:**", "🔴 Heart Attack" if prediction == 1 else "🟢 No Heart Attack")
         st.write(f"**Confidence:** {probability:.2%} based on {total} samples")
 
+    
+    # --- Visual Evaluation of Decision Tree ---
+    st.markdown("## Visual Insights from Decision Tree Model")
+
+    # 1. Full Tree Graph
+    st.markdown("### 1️⃣ Full Decision Tree Diagram")
+    st.image("outputs/graphs/tree_graph.png", caption="Visualized Decision Tree")
+    st.markdown("""
+     - The tree shows how the model splits based on features like **Troponin**, **CK-MB**, and **Blood Sugar**.
+     - Each node represents a decision based on a threshold; terminal nodes show predicted class.
+     - This helps clinicians understand **why** a patient is classified as high or low risk.
+     """)
+    
+     # 2. Confusion Matrix
+    st.markdown("### 2️⃣ Confusion Matrix on Test Data")
+    st.image("outputs/graphs/confusion_matrix_dt.png", caption="Decision Tree Confusion Matrix")
+    st.markdown("""
+    - Diagonal cells represent correct predictions; off-diagonal are errors.
+    - The model achieved **high precision and recall**, with minimal misclassifications.
+    - Balanced prediction performance across both heart attack and non-heart attack cases.
+    """)
+    
+    # 3. Conclusion
+    st.markdown("### Decision Tree: Summary & Conclusion")
+    st.markdown("""
+    - The **Decision Tree** model provides accurate and interpretable predictions.
+    - **Troponin and CK-MB** were key split features, confirming their diagnostic importance.
+    - Achieved strong classification results **without requiring ensemble methods**.
+
+    This model offers a clear, logic-based decision pathway suitable for clinical use.
+    """)
+
+    # --- Classification Report (Training Set) ---
+    st.markdown("### 3️⃣ Classification Report (Training Set)")
+    report_df = pd.read_csv("outputs/graphs/dt_classification_report_train.csv", index_col=0)
+    st.dataframe(report_df)
+
+    st.markdown("""
+    - Displays performance on the **training set**.
+    - Precision, recall, and F1-score are all near 1.00 — showing excellent learning.
+    - Confirms the Decision Tree captured strong patterns from training data.
+    """)
+
+    # --- Classification Report (Test Set) ---
+    st.markdown("### 4️⃣ Classification Report (Test Set)")
+    report_df = pd.read_csv("outputs/graphs/dt_classification_report_test.csv", index_col=0)
+    st.dataframe(report_df)
+
+    st.markdown("""
+    - This report evaluates the model on **unseen data** (test set).
+    - High precision, recall, and F1-score across both classes show strong generalization.
+    - Indicates the Decision Tree performs well in real-world prediction scenarios.
+    """)
+
+    st.markdown("## Decision Tree: Summary & Hypothesis Check")
+
+    st.markdown("""
+    ### Key Takeaways
+
+    - The Decision Tree achieved **~98% accuracy** with clear, interpretable logic paths.
+        - **Troponin**, **CK-MB**, and **Blood Sugar** were the most influential features.
+
+    ---
+
+    ### Hypothesis Review
+
+    - **H1 (Troponin & CK-MB):** ✅ Confirmed - key decision splits in the tree.
+    - **H2 (BP & Glucose):** ❌ Not supported - while Blood Sugar appears in the tree, its split does not direct toward heart attack predictions; Blood Pressure is not used at all.
+    - **H3 (Age):** ❌ Not supported — Age was not used in the model's decision logic.
+
+    ---
+
+    ### Conclusion
+
+    The Decision Tree is an accurate and transparent model for heart attack prediction. It validates key clinical indicators and offers interpretable decision paths for practical use.
+    """)
+
 # --- K-Means Clustering ---
 else:
     st.subheader("K-Means Clustering: Clinical Risk Subtypes")
@@ -271,13 +348,13 @@ else:
     fig.update_layout(polar=dict(radialaxis=dict(visible=True)), showlegend=True)
     st.plotly_chart(fig)
 
-    st.markdown("### 🧭 Cluster Heatmap Overview")
+    st.markdown("### Cluster Heatmap Overview")
     fig, ax = plt.subplots(figsize=(8, 5))
     sns.heatmap(cluster_profiles[kmeans_features], annot=True, cmap="coolwarm", fmt=".2f", ax=ax)
     ax.set_title("Average Clinical Features by Cluster")
     st.pyplot(fig)
 
-    st.markdown("### 🧠 Clinical Interpretation")
+    st.markdown("### Clinical Interpretation")
     if risk_label == "🔴 High":
         st.warning("⚠️ High-risk cluster: features like elevated Troponin or CK-MB likely contributed. Immediate follow-up advised.")
     elif risk_label == "🟠 Medium":
@@ -285,7 +362,7 @@ else:
     else:
         st.success("✅ Low-risk cluster. Continue monitoring and encourage healthy habits.")
 
-        st.markdown("### 📋 Cluster Risk Overview")
+        st.markdown("### Cluster Risk Overview")
 
     # Static cross-tabulation (from training, not recomputed here)
     cluster_counts = pd.DataFrame({
@@ -297,15 +374,14 @@ else:
     cluster_percentages = cluster_counts.div(cluster_counts.sum(axis=1), axis=0).round(2)
     cluster_percentages.columns = ['% No Heart Attack', '% Heart Attack']
 
-    st.markdown("#### 🧮 Raw Cluster Counts")
+    st.markdown("#### Raw Cluster Counts")
     st.dataframe(cluster_counts)
 
-    st.markdown("#### 📊 Risk Proportions per Cluster")
+    st.markdown("#### Risk Proportions per Cluster")
     st.dataframe(cluster_percentages)
 
     # Highlight current user's cluster
     cluster_stats = cluster_percentages.loc[cluster_id]
-    st.markdown("#### 🧠 Your Cluster in Context")
+    st.markdown("#### Your Cluster in Context")
     st.write(f"- **You are in Cluster {cluster_id}**.")
     st.write(f"- In this cluster, **{cluster_stats['% Heart Attack']:.0%}** of patients had a heart attack.")
-

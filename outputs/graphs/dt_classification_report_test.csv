@@ -1,0 +1,6 @@
+,precision,recall,f1-score,support
+No HA,0.988,0.976,0.982,85.0
+HA,0.973,0.986,0.98,73.0
+accuracy,0.981,0.981,0.981,0.981
+macro avg,0.981,0.981,0.981,158.0
+weighted avg,0.981,0.981,0.981,158.0
