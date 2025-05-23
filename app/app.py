@@ -178,7 +178,7 @@ else:
 
     st.markdown("### 🧭 Cluster Heatmap Overview")
     fig, ax = plt.subplots(figsize=(8, 5))
-    sns.heatmap(cluster_profiles[kmeans_features], annot=True, cmap="coolwarm", fmt=".1f", ax=ax)
+    sns.heatmap(cluster_profiles[kmeans_features], annot=True, cmap="coolwarm", fmt=".2f", ax=ax)
     ax.set_title("Average Clinical Features by Cluster")
     st.pyplot(fig)
 
