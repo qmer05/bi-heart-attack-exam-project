@@ -183,9 +183,9 @@ if model_option == "Logistic Regression":
 
     ### 📊 Hypothesis Review
 
-    - **H1 (Troponin & CK-MB):** ✅ Confirmed – strong positive coefficients and clinical relevance.
-    - **H2 (BP & Glucose):** ⚠️ Partially supported – minor influence observed.
-    - **H3 (Age):** ✅ Supported – age showed positive correlation, though modest in magnitude.
+    - **H1 (Troponin & CK-MB):** ✅ Confirmed - strong positive coefficients and clinical relevance.
+    - **H2 (BP & Glucose):** ❌ Not supported (inconclusive) - coefficients suggest weak or inverse relationships.
+    - **H3 (Age):** ✅ Supported - age showed positive correlation, though modest in magnitude.
 
     ---
 
