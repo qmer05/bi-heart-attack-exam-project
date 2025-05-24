@@ -96,3 +96,49 @@ To use BI and predictive modeling techniques to identify correlations among vita
 - **BI Developer**: Designs and builds visual dashboards
 - **ML Engineer**: Develops and evaluates predictive models
 - **Project Lead**: Oversees documentation, coordination, and final delivery
+
+## 5. Results & Key Findings
+
+Across three modeling approaches — Logistic Regression, Decision Tree, and K-Means Clustering — the following insights and validations were observed:
+
+### Key Predictors
+
+- **Troponin** emerged consistently as the **most influential biomarker**, showing the strongest association with heart attack outcomes across all models.
+- **CK-MB** also contributed significantly, especially in tree-based splits and clustering patterns.
+- **Blood sugar** was elevated in some high-risk clusters but was not a consistently strong predictor across all models.
+- **Age** showed moderate influence — older individuals had higher risk, especially evident in clustering patterns.
+
+---
+
+### Model-Specific Highlights
+
+- **Logistic Regression**:
+  - Achieved ~73% accuracy with optimal threshold tuning at 0.40.
+  - Provided strong interpretability through feature coefficients.
+  - Top features: **Troponin**, **CK-MB**, **Age**.
+
+- **Decision Tree**:
+  - Delivered ~98% accuracy with clear, rule-based splits.
+  - Troponin, CK-MB, and Blood Sugar were key decision points.
+  - No use of blood pressure or age in final decision paths.
+
+- **K-Means Clustering**:
+  - Identified **5 distinct patient subtypes** with meaningful risk levels.
+  - High-risk clusters had **elevated Troponin, CK-MB, and Glucose**.
+  - Surprisingly, the cluster with **highest BP** showed **lowest heart attack rate**, challenging assumptions about BP risk.
+
+---
+
+### Hypothesis Validation
+
+| Hypothesis                                   | Outcome        | Comment                                                                 |
+|---------------------------------------------|----------------|-------------------------------------------------------------------------|
+| **H1:** Troponin & CK-MB are key predictors  | ✅ Confirmed    | Strong signals in all models and highest coefficients / splits.         |
+| **H2:** BP & Glucose raise heart attack risk | ❌ Not supported| BP showed weak or even inverse effects; Glucose mixed but not decisive. |
+| **H3:** Age correlates with risk             | ✅ Supported    | Confirmed in Logistic and Clustering models.                            |
+
+---
+
+### Conclusion
+
+This project successfully validated clinical biomarkers — **Troponin and CK-MB** — as reliable indicators for heart attack risk. Using a mix of **interpretable models and unsupervised clustering**, it demonstrated how predictive analytics and BI tools can guide **early diagnostics and risk stratification**. The interactive dashboard serves as a practical tool for medical professionals, while the analytical pipeline offers a robust foundation for further research or real-world deployment.
