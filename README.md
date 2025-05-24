@@ -25,7 +25,7 @@ To use BI and predictive modeling techniques to identify correlations among vita
 ### Hypotheses
 - H1: Elevated troponin and CK-MB levels are strong predictors of heart attack occurrence.
 - H2: Patients with higher blood pressure and glucose levels show higher likelihood of a heart attack.
-- H3: Age is positively correlated with the probability of a heart attack, especially in male patients.
+- H3: Age is positively correlated with the probability of a heart attack.
 
 ---
 

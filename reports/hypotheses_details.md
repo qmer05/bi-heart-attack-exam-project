@@ -15,8 +15,7 @@
 #### **H3: Age is positively correlated with heart attack probability, especially in males.**  
 - **Rationale**:  
   - Aging increases arterial stiffness and cumulative damage.  
-  - Males face higher pre-menopausal risk compared to females (due to hormonal differences).  
-- **Implication**: Supports age- and sex-targeted preventive strategies.  
+- **Implication**: Supports age-targeted preventive strategies.  
 
 ### Connections  
 - **H1**: Diagnostic biomarkers.  
