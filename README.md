@@ -47,9 +47,47 @@ To use BI and predictive modeling techniques to identify correlations among vita
 
 ### Repository Structure
 
-<pre> ### 📁 Repository Structure 
-``` /bi-heart-attack-exam-project ├── app/ # Streamlit application files for deployment │ └── app.py # Main app entry point │ ├── data/ # Raw and cleaned datasets │ ├── Medicaldataset.csv │ └── cleaned_Medicaldataset.csv │ ├── outputs/ # Model outputs and visualizations │ ├── models/ # Trained model files & scalers │ │ ├── logistic_model_final.pkl │ │ ├── decision_tree_model.pkl │ │ ├── kmeans_model.pkl │ │ ├── scaler.pkl │ │ ├── scaler_kmeans.pkl │ │ ├── cluster_feature_means.csv │ │ └── cluster_outcome_ratios.csv │ ├── graphs/ # Visualizations used in the app │ └── threshold_tuning_summary.csv │ ├── reports/ # Final report and hypothesis notes │ ├── Exam-Project.pdf │ └── hypotheses_details.md │ ├── sprint_2_data_preparation/ # Data cleaning and preprocessing notebooks │ ├── 02_data_cleaning.ipynb │ ├── 03_exploration_and_analysis_copy.ipynb │ └── 04_data_engineering.ipynb │ ├── sprint_3_data_modelling/ # Modeling and evaluation notebooks │ ├── decision_tree.ipynb │ ├── k_means_clustering.ipynb │ ├── logistic_regression.ipynb │ └── different_data_models.ipynb │ ├── README.md # Project overview and documentation ├── requirements.txt # Python dependencies └── .gitignore # Files/folders to exclude from version control ``` </pre>
+```text
+/bi-heart-attack-exam-project
 
+├── app/                         # Streamlit application files for deployment
+│   └── app.py                   # Main app entry point
+
+├── data/                        # Raw and cleaned datasets
+│   ├── Medicaldataset.csv
+│   └── cleaned_Medicaldataset.csv
+
+├── outputs/                     # Model outputs and visualizations
+│   ├── models/                  # Trained model files & scalers
+│   │   ├── logistic_model_final.pkl
+│   │   ├── decision_tree_model.pkl
+│   │   ├── kmeans_model.pkl
+│   │   ├── scaler.pkl
+│   │   ├── scaler_kmeans.pkl
+│   │   ├── cluster_feature_means.csv
+│   │   └── cluster_outcome_ratios.csv
+│   ├── graphs/                  # Visualizations used in the app
+│   └── threshold_tuning_summary.csv
+
+├── reports/                     # Final report and hypothesis notes
+│   ├── Exam-Project.pdf
+│   └── hypotheses_details.md
+
+├── sprint_2_data_preparation/  # Data cleaning and preprocessing notebooks
+│   ├── 02_data_cleaning.ipynb
+│   ├── 03_exploration_and_analysis_copy.ipynb
+│   └── 04_data_engineering.ipynb
+
+├── sprint_3_data_modelling/    # Modeling and evaluation notebooks
+│   ├── decision_tree.ipynb
+│   ├── k_means_clustering.ipynb
+│   ├── logistic_regression.ipynb
+│   └── different_data_models.ipynb
+
+├── README.md                    # Project overview and documentation
+├── requirements.txt             # Python dependencies
+└── .gitignore                   # Files/folders to exclude from version control
+```
 ---
 
 ## 4. Team Structure (if applicable)
