@@ -22,18 +22,18 @@ model_option = st.sidebar.selectbox("Choose Prediction Model", [
     "Logistic Regression", "Decision Tree", "K-Means Clustering"
 ])
 
-# Input sliders (shared)
-age = st.sidebar.slider("Age", 18, 99, 56, format="%d years")
-heart_rate = st.sidebar.slider("Heart Rate", 35, 130, 75, format="%d bpm")
-sbp = st.sidebar.slider("Systolic Blood Pressure", 60, 200, 130, format="%d mmHg")
-dbp = st.sidebar.slider("Diastolic Blood Pressure", 35, 120, 70, format="%d mmHg")
-blood_sugar = st.sidebar.slider("Blood Sugar", 30, 280, 120, format="%d mg/dL")
-ckmb = st.sidebar.slider("CK-MB", 0.30, 10.99, 2.49, format="%.2f ng/mL")
-# Troponin slider (logistic-friendly: 1-30 ng/mL)
-troponin_ui = st.sidebar.slider("Troponin", 1, 30, 5, format="%d ng/mL")
-troponin_for_logistic = troponin_ui / 1000       # e.g., 10 -> 0.010 for logistic
-troponin_for_kmeans = troponin_ui / 100          # e.g., 10 -> 0.10 for k-means
-pulse_pressure = sbp - dbp
+# Input sliders (shared by Logistic Regression and K-Means only)
+if model_option != "Decision Tree":
+    age = st.sidebar.slider("Age", 18, 99, 56, format="%d years")
+    heart_rate = st.sidebar.slider("Heart Rate", 35, 130, 75, format="%d bpm")
+    sbp = st.sidebar.slider("Systolic Blood Pressure", 60, 200, 130, format="%d mmHg")
+    dbp = st.sidebar.slider("Diastolic Blood Pressure", 35, 120, 70, format="%d mmHg")
+    blood_sugar = st.sidebar.slider("Blood Sugar", 30, 280, 120, format="%d mg/dL")
+    ckmb = st.sidebar.slider("CK-MB", 0.30, 10.99, 2.49, format="%.2f ng/mL")
+    troponin_ui = st.sidebar.slider("Troponin", 1, 30, 5, format="%d ng/mL")
+    troponin_for_logistic = troponin_ui / 1000
+    troponin_for_kmeans = troponin_ui / 100
+    pulse_pressure = sbp - dbp
 
 # --- Logistic Regression ---
 if model_option == "Logistic Regression":
@@ -209,7 +209,7 @@ elif model_option == "Decision Tree":
         feature = feature_names_used[node_id]
         threshold = tree_.threshold[node_id]
 
-        choice = st.radio(
+        choice = st.sidebar.radio(
             f"Step {step+1}: Is {feature} ≤ {threshold:.3f}?",
             ["Choose...", "Yes", "No"],
             key=f"node_{node_id}"
