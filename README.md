@@ -22,7 +22,7 @@ To use BI and predictive modeling techniques to identify correlations among vita
 
 ### Research Questions
 - What clinical indicators are most strongly associated with a positive heart attack diagnosis?
-- Can we build a predictive model that classifies patients into risk categories?
+- Can I build a predictive model that classifies patients into risk categories?
 - What trends can be visualized to assist medical professionals in preventative diagnostics?
 
 ### Hypotheses
