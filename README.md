@@ -1,6 +1,8 @@
-# Project Title: Predicting Heart Attacks – A BI-Powered Diagnostic Support Tool
+# Project Title: Predicting Heart Attacks – A BI-Powered Diagnostic Support Tool 
 
-# Developpers: Ömer Øcalan
+#### Team member and project developper: Ömer Øcalan
+
+---
 
 ## 1. Project Annotation
 
