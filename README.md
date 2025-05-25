@@ -93,7 +93,7 @@ To use BI and predictive modeling techniques to identify correlations among vita
 ```
 ---
 
-## 4. Teams Structure
+## 4. Team Structure
 
 This project was completed independently, with one person fulfilling all key roles:
 
