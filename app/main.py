@@ -37,6 +37,18 @@ if page_option in ["Logistic Regression", "K-Means Clustering"]:
 
 # Page routing logic
 if page_option == "Data Exploration":
+
+    st.sidebar.info("""
+    **Heart Attack Risk Explorer**
+
+    This diagnostic tool leverages clinical data and machine learning to assess the likelihood of a heart attack.
+
+    **Features:**
+    - Data exploration and biomarker insights  
+    - Risk prediction with multiple ML models  
+    - Interactive interface for patient-level analysis
+    """)
+
     # Display the data exploration start page
     from data_exploration import show_exploration_page
     show_exploration_page()
