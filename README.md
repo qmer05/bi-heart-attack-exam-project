@@ -1,5 +1,7 @@
 # Project Title: Predicting Heart Attacks – A BI-Powered Diagnostic Support Tool
 
+# Developpers: Ömer Øcalan
+
 ## 1. Project Annotation
 
 In this Business Intelligence (BI) project, I analyze a clinical dataset collected from Zheen Hospital in Erbil, Iraq, to explore and model the risk factors associated with heart attacks. The dataset includes medical indicators such as heart rate, blood pressure, blood sugar, and cardiac biomarkers (CK-MB, Troponin), along with demographic attributes like age and gender. The project’s primary objective is to discover data-driven insights and develop an interactive BI dashboard to support early diagnosis and prevention strategies.
@@ -18,7 +20,6 @@ To use BI and predictive modeling techniques to identify correlations among vita
 
 ### Research Questions
 - What clinical indicators are most strongly associated with a positive heart attack diagnosis?
-- Are there significant patterns across demographics (age, gender) that influence heart attack outcomes?
 - Can we build a predictive model that classifies patients into risk categories?
 - What trends can be visualized to assist medical professionals in preventative diagnostics?
 
@@ -35,9 +36,9 @@ To use BI and predictive modeling techniques to identify correlations among vita
 | Sprint | Duration       | Goals                                                | Deliverables                         |
 |--------|----------------|------------------------------------------------------|--------------------------------------|
 | 1      | Week 1         | Problem formulation, planning                        | Problem statement, .md file          |
-| 2      | Weeks 2–3      | Data cleaning, exploration, and correlation analysis | Data report, initial visualizations  |
-| 3      | Weeks 4–5      | BI dashboard and predictive modeling                 | Interactive dashboard, model summary |
-| 4      | Week 6         | Final report and GitHub documentation                | Final .pdf, GitHub release           |
+| 2      | Weeks 2        | Data cleaning, exploration, and correlation analysis | Data report, initial visualizations  |
+| 3      | Weeks 3-4      | BI dashboard and predictive modeling                 | Interactive dashboard, model summary |
+| 4      | Week 4         | Final report and GitHub documentation                | Final .pdf, GitHub release           |
 
 ### Tools and Environment
 - **Programming**: Python (Pandas, Matplotlib, Seaborn, Scikit-learn)
@@ -69,7 +70,7 @@ To use BI and predictive modeling techniques to identify correlations among vita
 │   ├── graphs/                  # Visualizations used in the app
 │   └── threshold_tuning_summary.csv
 
-├── reports/                     # Final report and hypothesis notes
+├── reports/                     # Assignment and hypothesis notes
 │   ├── Exam-Project.pdf
 │   └── hypotheses_details.md
 
@@ -90,12 +91,14 @@ To use BI and predictive modeling techniques to identify correlations among vita
 ```
 ---
 
-## 4. Team Structure (if applicable)
+## 4. Teams Structure
+
+This project was completed independently, with one person fulfilling all key roles:
 
 - **Data Analyst**: Cleans data and performs initial statistical analysis
 - **BI Developer**: Designs and builds visual dashboards
 - **ML Engineer**: Develops and evaluates predictive models
-- **Project Lead**: Oversees documentation, coordination, and final delivery
+- **Project Lead**: Oversees documentation and final delivery
 
 ## 5. Results & Key Findings
 
