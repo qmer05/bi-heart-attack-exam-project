@@ -54,7 +54,12 @@ To use BI and predictive modeling techniques to identify correlations among vita
 /bi-heart-attack-exam-project
 
 ├── app/                         # Streamlit application files for deployment
-│   └── app.py                   # Main app entry point
+│   ├── main.py                  # App controller logic (Troponin slider updated to µg/mL)
+│   ├── logistic_regression.py   # Logistic model interface and result display
+│   ├── decision_tree.py         # Decision tree model logic
+│   ├── kmeans_clustering.py     # K-means clustering logic
+│   ├── data_exploration.py      # Exploratory analysis visuals and insights
+│   └── __pycache__/             # Compiled Python cache files
 
 ├── data/                        # Raw and cleaned datasets
 │   ├── Medicaldataset.csv
@@ -69,8 +74,7 @@ To use BI and predictive modeling techniques to identify correlations among vita
 │   │   ├── scaler_kmeans.pkl
 │   │   ├── cluster_feature_means.csv
 │   │   └── cluster_outcome_ratios.csv
-│   ├── graphs/                  # Visualizations used in the app
-│   └── threshold_tuning_summary.csv
+│   └── graphs/                  # Visualizations used in the app (e.g. updated units in Troponin plots)
 
 ├── reports/                     # Assignment and hypothesis notes
 │   ├── Exam-Project.pdf
