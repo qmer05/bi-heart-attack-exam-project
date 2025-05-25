@@ -5,7 +5,7 @@ import pandas as pd
 def show_exploration_page():
     """Display the data exploration and analysis content on the Streamlit app."""
     # Page title and introduction
-    st.title("🔍 Data Exploration and Analysis")
+    st.title("Data Exploration and Analysis")
     st.markdown("""
     This section provides an overview of the dataset and key insights from exploratory data analysis.
     Use this page to understand the data **before** exploring predictive models.
